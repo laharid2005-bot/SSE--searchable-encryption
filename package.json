@@ -1,0 +1,31 @@
+const encoder = new TextEncoder()
+const decoder = new TextDecoder()
+const MASTER_KEY = 'SuperSecureMasterKey123'
+
+async function getKey() {
+  return crypto.subtle.importKey(
+    'raw',
+    encoder.encode(MASTER_KEY),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  )
+}
+
+export async function generateToken(word: string) {
+  const key = await getKey()
+  const signature = await crypto.subtle.sign('HMAC', key, encoder.encode(word.toLowerCase()))
+  return btoa(String.fromCharCode(...new Uint8Array(signature)))
+}
+
+export async function encryptData(text: string) {
+  const iv = crypto.getRandomValues(new Uint8Array(12))
+  const key = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ['encrypt', 'decrypt'])
+  const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, encoder.encode(text))
+
+  return {
+    id: crypto.randomUUID(),
+    ciphertext: btoa(String.fromCharCode(...new Uint8Array(encrypted))),
+    iv: btoa(String.fromCharCode(...iv))
+  }
+}

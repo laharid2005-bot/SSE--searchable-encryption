@@ -1,0 +1,23 @@
+import './globals.css'
+import Link from 'next/link'
+
+export default function RootLayout({ children }: any) {
+  return (
+    <html lang="en">
+      <body className="bg-slate-900 text-white">
+        <div className="flex">
+          <aside className="w-60 h-screen bg-slate-800 p-5 space-y-4">
+            <h2 className="text-xl font-bold text-blue-400">SSE Demo</h2>
+            <nav className="flex flex-col space-y-2">
+              <Link href="/">Dashboard</Link>
+              <Link href="/encrypt">Encrypt</Link>
+              <Link href="/search">Search</Link>
+              <Link href="/audit">Audit</Link>
+            </nav>
+          </aside>
+          <main className="p-8 w-full">{children}</main>
+        </div>
+      </body>
+    </html>
+  )
+}
